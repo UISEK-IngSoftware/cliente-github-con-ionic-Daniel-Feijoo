@@ -1,34 +1,44 @@
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonList } from '@ionic/react';
+import { IonContent, IonHeader, IonList, IonPage, IonTitle, IonToolbar, useIonViewDidEnter } from '@ionic/react';
+import { useState } from 'react';
+
 import './Tab1.css';
 import RepoItem from '../components/RepoItem';
+import { RepositoryItem } from '../interfaces/RepositoryItem';
+import { fetchRepositories } from '../services/GithubServices';
 
 const Tab1: React.FC = () => {
+  const [repos, setRepos] = useState<RepositoryItem[]>([]);
+
+  const loadRepos = async () => {
+    const reposData = await fetchRepositories();
+    setRepos(reposData);
+  };
+
+  useIonViewDidEnter(() => {
+    console.log ("IonViewDidEnter: Cargando repositorios...");  
+    loadRepos();
+  });
+
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Tab 1</IonTitle>
+          <IonTitle>Repositorios</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
         <IonHeader collapse="condense">
           <IonToolbar>
-            <IonTitle size="large">Tab 1</IonTitle>
+            <IonTitle size="large">Repositorios</IonTitle>
           </IonToolbar>
         </IonHeader>
         <IonList>
-          <RepoItem
-          name="android-project"
-          imageUrl="https://cdn.worldvectorlogo.com/logos/android-6.svg"
-          />
-          <RepoItem
-          name="ios-project"
-          imageUrl="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg"
-          />
-          <RepoItem
-          name="ionic-project"
-          imageUrl="https://cdn.iconscout.com/icon/free/png-256/free-ionic-logo-icon-svg-download-png-2945013.png"
-          />
+          {repos.map((repo,index) => (
+            <RepoItem 
+              key={index}
+              repo={repo}
+            />
+          ))}
         </IonList>
       </IonContent>
     </IonPage>
