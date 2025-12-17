@@ -1,9 +1,24 @@
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, useIonViewDidEnter } from '@ionic/react';
 import { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle } from '@ionic/react';
 import ExploreContainer from '../components/ExploreContainer';
 import './Tab3.css';
+import { getUserInfo } from '../services/GithubServices';
+import { UserInfo } from '../interfaces/UserInfo';
+import { useState } from 'react';
 
 const Tab3: React.FC = () => {
+
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+  
+  const loadUserInfo = async () => {
+    const info = await getUserInfo();
+    setUserInfo(info);
+  };
+
+  useIonViewDidEnter(() => {
+    loadUserInfo();
+  })
+  
   return (
     <IonPage>
       <IonHeader>
@@ -18,13 +33,14 @@ const Tab3: React.FC = () => {
           </IonToolbar>
         </IonHeader>
         <IonCard>
-          <img alt="Silhouette of mountains" src="https://media.licdn.com/dms/image/v2/D4E03AQG9VhkDOaWMcg/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1708748312886?e=2147483647&v=beta&t=oQD5Z2LqXthOwa3QJkvlXWsGRXmSv9KilXBBkSHkLTA" />
+          <img alt={userInfo?.name}
+          src={userInfo?.avatar_url} />
           <IonCardHeader>
-            <IonCardTitle>Daniel Feijóo</IonCardTitle>
-            <IonCardSubtitle>Daniel-Feijoo</IonCardSubtitle>
+            <IonCardTitle>{userInfo?.name}</IonCardTitle>
+            <IonCardSubtitle>{userInfo?.login}</IonCardSubtitle>
           </IonCardHeader>
 
-          <IonCardContent>Soy un desarrollador de software apasionado</IonCardContent>
+          <IonCardContent>{userInfo?.bio}</IonCardContent>
         </IonCard>
       </IonContent>
     </IonPage>
