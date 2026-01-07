@@ -1,15 +1,20 @@
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, useIonViewDidEnter } from '@ionic/react';
+import { IonButton, IonContent, IonHeader, IonIcon, IonPage, IonTitle, IonToolbar, useIonViewDidEnter } from '@ionic/react';
 import { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle } from '@ionic/react';
-import ExploreContainer from '../components/ExploreContainer';
 import './Tab3.css';
-import { getUserInfo } from '../services/GithubServices';
+import { use, useState } from 'react';
 import { UserInfo } from '../interfaces/UserInfo';
-import { useState } from 'react';
+import { logOutOutline } from 'ionicons/icons';
+import { useHistory } from 'react-router';
+import AuthService from '../services/AuthService';
+import { getUserInfo } from '../services/GithubServices';
+
 
 const Tab3: React.FC = () => {
 
-  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
-  
+  const [UserInfo, setUserInfo] = useState<UserInfo | null>(null);
+const history = useHistory();
+
+
   const loadUserInfo = async () => {
     const info = await getUserInfo();
     setUserInfo(info);
@@ -17,34 +22,48 @@ const Tab3: React.FC = () => {
 
   useIonViewDidEnter(() => {
     loadUserInfo();
-  })
-  
+  });
+
+const handleLogout = () => {
+  AuthService.logout();
+  history.replace('/login');
+}
+
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Perfil de usuario</IonTitle>
+          <IonTitle>Perfil de usuario</IonTitle> 
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
         <IonHeader collapse="condense">
           <IonToolbar>
-            <IonTitle size="large">Perfil de usuario</IonTitle>
+            <IonTitle size="large">Tab 3</IonTitle>
           </IonToolbar>
         </IonHeader>
         <IonCard>
-          <img alt={userInfo?.name}
-          src={userInfo?.avatar_url} />
-          <IonCardHeader>
-            <IonCardTitle>{userInfo?.name}</IonCardTitle>
-            <IonCardSubtitle>{userInfo?.login}</IonCardSubtitle>
-          </IonCardHeader>
+      <img alt = {UserInfo?.name}
+      src = {UserInfo?.avatar_url} />
+      <IonCardHeader>
+        <IonCardTitle>{UserInfo?.name}</IonCardTitle>
+        <IonCardSubtitle>{UserInfo?.login}</IonCardSubtitle>
+      </IonCardHeader>
 
-          <IonCardContent>{userInfo?.bio}</IonCardContent>
-        </IonCard>
+      <IonCardContent>{UserInfo?.bio}</IonCardContent>
+    </IonCard>
+
+    <IonButton
+      expand="block"
+      color="danger"
+      onClick={handleLogout}>
+        <IonIcon slot="start" icon={logOutOutline}></IonIcon>
+      Cerrar Sesión
+    </IonButton>
+  ;
       </IonContent>
     </IonPage>
   );
 };
 
-export default Tab3;
+export default Tab3;  
