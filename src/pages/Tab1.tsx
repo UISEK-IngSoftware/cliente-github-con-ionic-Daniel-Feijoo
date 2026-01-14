@@ -1,13 +1,15 @@
-import { IonContent, IonHeader, IonList, IonPage, IonTitle, IonToolbar, useIonViewDidEnter } from '@ionic/react';
+import { IonContent, IonHeader, IonList, IonPage, IonTitle, IonToolbar, useIonViewDidEnter, useIonAlert, useIonToast } from '@ionic/react';
 import { useState } from 'react';
 
 import './Tab1.css';
 import RepoItem from '../components/RepoItem';
 import { RepositoryItem } from '../interfaces/RepositoryItem';
-import { fetchRepositories } from '../services/GithubServices';
+import { fetchRepositories, updateRepository, deleteRepository } from '../services/GithubServices';
 
 const Tab1: React.FC = () => {
   const [repos, setRepos] = useState<RepositoryItem[]>([]);
+  const [presentAlert] = useIonAlert();
+  const [presentToast] = useIonToast();
 
   const loadRepos = async () => {
     const reposData = await fetchRepositories();
@@ -18,6 +20,97 @@ const Tab1: React.FC = () => {
     console.log ("IonViewDidEnter: Cargando repositorios...");  
     loadRepos();
   });
+
+  const handleEdit = (repo: RepositoryItem) => {
+    presentAlert({
+      header: 'Editar Repositorio',
+      message: `Editar: ${repo.name}`,
+      inputs: [
+        {
+          name: 'name',
+          type: 'text',
+          placeholder: 'Nombre del repositorio',
+          value: repo.name,
+        },
+        {
+          name: 'description',
+          type: 'textarea',
+          placeholder: 'Descripción',
+          value: repo.description || '',
+        },
+      ],
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+        },
+        {
+          text: 'Guardar',
+          handler: async (data) => {
+            try {
+              await updateRepository(repo.name, {
+                name: data.name,
+                description: data.description,
+                owner: repo.owner,
+              });
+              
+              presentToast({
+                message: 'Repositorio actualizado exitosamente',
+                duration: 2000,
+                color: 'success',
+              });
+              
+              loadRepos();
+            } catch (error) {
+              presentToast({
+                message: 'Error al actualizar el repositorio',
+                duration: 2000,
+                color: 'danger',
+              });
+            }
+          },
+        },
+      ],
+    });
+  };
+
+  const handleDelete = (repo: RepositoryItem) => {
+    presentAlert({
+      header: 'Confirmar eliminación',
+      message: `¿Estás seguro de que deseas eliminar el repositorio "${repo.name}"?`,
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+        },
+        {
+          text: 'Eliminar',
+          role: 'destructive',
+          handler: async () => {
+            try {
+              if (repo.owner) {
+                await deleteRepository(repo.owner, repo.name);
+                
+                presentToast({
+                  message: 'Repositorio eliminado exitosamente',
+                  duration: 2000,
+                  color: 'success',
+                });
+                
+                loadRepos();
+              }
+            } catch (error) {
+              presentToast({
+                message: 'Error al eliminar el repositorio',
+                duration: 2000,
+                color: 'danger',
+              });
+            }
+          },
+        },
+      ],
+    });
+  };
 
   return (
     <IonPage>
@@ -33,10 +126,12 @@ const Tab1: React.FC = () => {
           </IonToolbar>
         </IonHeader>
         <IonList>
-          {repos.map((repo,index) => (
+          {repos.map((repo, index) => (
             <RepoItem 
               key={index}
               repo={repo}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
             />
           ))}
         </IonList>

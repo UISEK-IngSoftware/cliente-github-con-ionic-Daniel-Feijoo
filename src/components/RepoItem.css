@@ -1,0 +1,55 @@
+/* Estilos para los botones de editar y eliminar */
+ion-item-option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+  transition: all 0.3s ease;
+}
+
+/* Botón de editar */
+ion-item-option[color="primary"] {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+ion-item-option[color="primary"]:hover {
+  background: linear-gradient(135deg, #5568d3 0%, #63408b 100%);
+}
+
+/* Botón de eliminar */
+ion-item-option[color="danger"] {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+ion-item-option[color="danger"]:hover {
+  background: linear-gradient(135deg, #d67edb 0%, #d43f53 100%);
+}
+
+/* Iconos más grandes y con animación */
+ion-item-option ion-icon {
+  font-size: 28px !important;
+  transition: transform 0.2s ease;
+}
+
+ion-item-option:active ion-icon {
+  transform: scale(1.2);
+}
+
+/* Efecto de sombra en el item cuando se desliza */
+ion-item-sliding[open] ion-item {
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Thumbnail con bordes redondeados */
+ion-thumbnail {
+  --border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Mejorar apariencia del item */
+ion-item {
+  --padding-start: 16px;
+  --inner-padding-end: 16px;
+  --background-hover: rgba(var(--ion-color-primary-rgb), 0.04);
+  transition: background 0.2s ease;
+}

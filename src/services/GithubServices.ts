@@ -56,6 +56,33 @@ export const createRepository = async (repo: RepositoryItem): Promise<void> => {
     }
 };
 
+//Método PUT 
+
+export const updateRepository = async (repoName: string, updatedData: Partial<RepositoryItem>): Promise<void> => {
+    try {
+        const response = await githubApi.patch(`/repos/${updatedData.owner}/${repoName}`, {
+            name: updatedData.name,
+            description: updatedData.description,
+        });
+        console.log("Repositorio actualizado", response.data);
+    } catch (error) {
+        console.error("Ocurrió un error al actualizar el repositorio:", error);
+        throw error;
+    }
+};
+
+//Método DELETE 
+
+export const deleteRepository = async (owner: string, repoName: string): Promise<void> => {
+    try {
+        await githubApi.delete(`/repos/${owner}/${repoName}`);
+        console.log("Repositorio eliminado:", repoName);
+    } catch (error) {
+        console.error("Ocurrió un error al eliminar el repositorio:", error);
+        throw error;
+    }
+};
+
 export const getUserInfo = async (): Promise<UserInfo> => {
     try {
         const response = await githubApi.get(`/user`);
