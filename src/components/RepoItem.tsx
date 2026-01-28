@@ -5,13 +5,13 @@ import { RepositoryItem } from '../interfaces/RepositoryItem';
 
 interface RepoItemProps {
   repo: RepositoryItem;
-  onEdit: (repo: RepositoryItem) => void;
-  onDelete: (repo: RepositoryItem) => void;
+  onEdit: (repo: RepositoryItem) => void; //editar
+  onDelete: (repo: RepositoryItem) => void; //eliminar
 }
 
 const RepoItem: React.FC<RepoItemProps> = ({ repo, onEdit, onDelete }) => {
   return ( 
-    <IonItemSliding>
+    <IonItemSliding> 
       <IonItem>
         <IonThumbnail slot="start"> 
           <img src={repo.imageUrl || "https://ionicframework.com/docs/demos/api/list/avatar-finn.png"} alt={repo.name}/>

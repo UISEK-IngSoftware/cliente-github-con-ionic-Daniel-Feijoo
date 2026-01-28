@@ -5,15 +5,19 @@ import './Tab1.css';
 import RepoItem from '../components/RepoItem';
 import { RepositoryItem } from '../interfaces/RepositoryItem';
 import { fetchRepositories, updateRepository, deleteRepository } from '../services/GithubServices';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const Tab1: React.FC = () => {
+  const [loading, setLoading] = useState(false);
   const [repos, setRepos] = useState<RepositoryItem[]>([]);
   const [presentAlert] = useIonAlert();
   const [presentToast] = useIonToast();
 
   const loadRepos = async () => {
+    setLoading(true);
     const reposData = await fetchRepositories();
     setRepos(reposData);
+    setLoading(false);
   };
 
   useIonViewDidEnter(() => {
@@ -135,6 +139,7 @@ const Tab1: React.FC = () => {
             />
           ))}
         </IonList>
+        <LoadingSpinner isOpen={loading} />
       </IonContent>
     </IonPage>
   );

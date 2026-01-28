@@ -7,6 +7,10 @@ const GITHUB_API_URL = import.meta.env.VITE_API_URL;
 
 const githubApi = axios.create({
     baseURL: GITHUB_API_URL,
+    /*headers: {
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "Pragma": "no-cache"
+    }*/
 });
 
 githubApi.interceptors.request.use((config) => {
@@ -27,6 +31,7 @@ export const fetchRepositories = async (): Promise<RepositoryItem[]> => {
                 sort: "created",
                 direction: "desc",
                 affiliation: "owner",
+                t: Date.now()
             }
         });
 

@@ -7,17 +7,22 @@ import { logOutOutline } from 'ionicons/icons';
 import { useHistory } from 'react-router';
 import AuthService from '../services/AuthService';
 import { getUserInfo } from '../services/GithubServices';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 
 const Tab3: React.FC = () => {
+
+  const [loading, setLoading] = useState(false);
 
   const [UserInfo, setUserInfo] = useState<UserInfo | null>(null);
 const history = useHistory();
 
 
   const loadUserInfo = async () => {
+    setLoading(true);
     const info = await getUserInfo();
     setUserInfo(info);
+    setLoading(false); 
   };
 
   useIonViewDidEnter(() => {
@@ -60,7 +65,7 @@ const handleLogout = () => {
         <IonIcon slot="start" icon={logOutOutline}></IonIcon>
       Cerrar Sesión
     </IonButton>
-  ;
+      <LoadingSpinner isOpen={loading} />
       </IonContent>
     </IonPage>
   );

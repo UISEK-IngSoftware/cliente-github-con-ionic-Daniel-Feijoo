@@ -5,9 +5,12 @@ import './Tab2.css';
 import { useHistory } from 'react-router';
 import { RepositoryItem } from '../interfaces/RepositoryItem';
 import { createRepository } from '../services/GithubServices';
+import LoadingSpinner from '../components/LoadingSpinner';
+import { useState } from 'react';
 
 const Tab2: React.FC = () => {
   
+  const [loading, setLoading] = useState(false);
   const history = useHistory();
 
   const repoFormData : RepositoryItem = { 
@@ -31,10 +34,14 @@ const Tab2: React.FC = () => {
       alert("El nombre del repositorio es obligatorio");
       return;
     }
+
+    setLoading(true);
     createRepository(repoFormData)
     .then(() => {history.push(`/tab1`); })
     .catch(() => {
       alert("Error al crear repositorio");
+    }).finally(() => {
+      setLoading(false);
     });
   }; 
 
@@ -76,9 +83,12 @@ const Tab2: React.FC = () => {
           </IonButton>
           
         </div>
+        <LoadingSpinner isOpen={loading} />
       </IonContent>
     </IonPage>
   );
 };
 
 export default Tab2;
+
+
